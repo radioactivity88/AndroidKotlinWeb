@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Metro 4 -->
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+</head>
+<body>
+<h2 class="text-center">List of numbers</h2>
+<button class="button primary" onclick="add()">Add</button>
+<button class="button" onclick="clean()">Clean</button>
+<ul data-role="listview" data-on-node-click="selected" id="numbers">
+</ul>
+<!-- Metro 4 -->
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script>
+    $(document).ready(function () {
+        add();
+        add();
+    });
+
+    var number = 0;
+    function selected(node, list){
+        var lv = Metro.getPlugin('#numbers', 'listview');
+        console.log(node[0].innerText);
+        PosApi.notify(node[0].innerText);
+    }
+    function startup(){
+        console.log('startup');
+    }
+    function add(){
+        console.log('add number');
+        var lv = Metro.getPlugin('#numbers', 'listview');
+        lv.add(null, {caption: number});
+        number = number+1;
+    }
+    function clean(){
+        console.log('clean numbers');
+        var lv = Metro.getPlugin('#numbers', 'listview');
+        lv.selectAll(true)
+        let nodes = lv.getSelected()
+        for (let value of nodes) {
+            lv.del(value)
+        }
+        number = 0;
+    }
+
+
+
+</script>
+</body>
+</html>

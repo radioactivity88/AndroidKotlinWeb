@@ -1,6 +1,7 @@
 package com.radioactivity.test.androidkotlinweb
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
@@ -13,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val URL_ADDRESS = "https://google.com"
+        const val URL_ADDRESS = "file:///android_asset/index.html"
     }
 
     private lateinit var btnRefresh: ImageButton
@@ -34,13 +35,16 @@ class MainActivity : AppCompatActivity() {
 
         webView.webViewClient = MyWebViewClient()
         webView.webChromeClient = WebChromeClient()
-        webView.addJavascriptInterface(JsHandler(textNotify), "PosApi")
+        webView.addJavascriptInterface(JsHandler(this, textNotify), "PosApi")
         webView.settings.javaScriptEnabled = true
 
         val handler = WebViewHandler(webView)
         btnAdd.setOnClickListener { handler.add() }
         btnClean.setOnClickListener { handler.clean() }
         btnRefresh.setOnClickListener { handler.refresh() }
+
+        // load page on start
+        handler.refresh()
     }
 
     private class MyWebViewClient : WebViewClient() {
@@ -65,10 +69,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    class JsHandler(private val textInfo: EditText) {
+    class JsHandler(private val activity: Activity, private val textInfo: EditText) {
         @JavascriptInterface
         fun notify(message: String) {
-            textInfo.setText(message)
+            activity.runOnUiThread { textInfo.setText(message.trim()) }
         }
     }
 
