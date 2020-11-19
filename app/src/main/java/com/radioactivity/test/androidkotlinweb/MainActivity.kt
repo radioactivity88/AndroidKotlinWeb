@@ -10,6 +10,9 @@ import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import java.util.*
+import kotlin.math.abs
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var btnRefresh: ImageButton
     private lateinit var btnAdd: ImageButton
+    private lateinit var btnRandom:ImageButton
     private lateinit var btnClean: ImageButton
     private lateinit var textNotify: EditText
     private lateinit var webView: WebView
@@ -30,7 +34,8 @@ class MainActivity : AppCompatActivity() {
         btnRefresh = findViewById(R.id.button_update)
         btnAdd = findViewById(R.id.button_add)
         btnClean = findViewById(R.id.button_clean)
-        textNotify = findViewById(R.id.text_notify);
+        btnRandom = findViewById(R.id.button_random)
+        textNotify = findViewById(R.id.text_notify)
         webView = findViewById(R.id.web_view)
 
         webView.webViewClient = MyWebViewClient()
@@ -42,20 +47,33 @@ class MainActivity : AppCompatActivity() {
         btnAdd.setOnClickListener { handler.add() }
         btnClean.setOnClickListener { handler.clean() }
         btnRefresh.setOnClickListener { handler.refresh() }
+        btnRandom.setOnClickListener { handler.addRandom() }
 
         // load page on start
         handler.refresh()
     }
 
+    /**
+     * This handler catches page status
+     */
     private class MyWebViewClient : WebViewClient() {
         override fun onPageFinished(view: WebView?, url: String?) {
             view?.loadUrl("javascript:startup()")
         }
     }
 
+    /**
+     * This is handler describes API of JS scrip.
+     * Android application can call this methods to send some data into JS
+     */
     class WebViewHandler(private val ww: WebView) {
         fun add() {
             ww.loadUrl("javascript:add()")
+        }
+
+        fun addRandom(){
+            val random = Random(Date().time)
+            ww.loadUrl("javascript:random(" + abs(random.nextInt() % 100) + ")")
         }
 
         fun clean() {
@@ -68,8 +86,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+    /**
+     * This is API for JS, javascript can call methods annotated by  @JavascriptInterface
+     * Be carefully with parameters! See JS->Java and Java->JS compatibility.
+     */
     class JsHandler(private val activity: Activity, private val textInfo: EditText) {
+
         @JavascriptInterface
         fun notify(message: String) {
             activity.runOnUiThread { textInfo.setText(message.trim()) }

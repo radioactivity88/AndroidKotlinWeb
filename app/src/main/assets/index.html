@@ -38,6 +38,11 @@
         lv.add(null, {caption: number});
         number = number+1;
     }
+    function random(value){
+        console.log('add random');
+        var lv = Metro.getPlugin('#numbers', 'listview');
+        lv.add(null, {caption: value});
+    }
     function clean(){
         console.log('clean numbers');
         var lv = Metro.getPlugin('#numbers', 'listview');
