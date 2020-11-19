@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * This is handler describes API of JS scrip.
+     * This handler describes API of android business logic.
      * Android application can call this methods to send some data into JS
      */
     class WebViewHandler(private val ww: WebView) {
